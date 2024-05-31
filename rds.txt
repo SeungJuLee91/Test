@@ -1,0 +1,12 @@
+resource "aws_db_instance" "mydb" {                # RDS 인스턴스를 정의하는 블록
+  allocated_storage    = 20                        # 할당된 스토리지 크기(GB)
+  storage_type         = "gp2"                     # 스토리지 유형 gp2(일반 목적 SSD)
+  engine               = "mysql"                   # 데이터베이스 엔진
+  engine_version       = "8.0"                     # 데이터베이스 엔진 버전
+  instance_class       = "db.t3.micro"             # 인스턴스 클래스
+  db_name              = "mydatabase"              # 데이터베이스 이름
+  username             = "foo"                     # 데이터베이스 관리자 사용자 이름
+  password             = "foobarbaz"               # 데이터베이스 관리자 비밀번호
+  parameter_group_name = "default.mysql8.0"        # 파라미터 그룹 이름
+  skip_final_snapshot  = true                      # 삭제 시 최종 스냅샷을 건너뛰기 위한 설정
+}
