@@ -1,4 +1,3 @@
-# Dockerfile
 # 첫 번째 이미지
 FROM node:14 AS build-stage
 WORKDIR /app
