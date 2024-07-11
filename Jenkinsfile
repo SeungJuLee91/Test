@@ -20,6 +20,21 @@ pipeline {
             }
         }
 
+        stage('Prisma Cloud Scan') {
+            steps {
+                script {
+                    prismaCloudScan (
+                        consoleURI: 'http://192.168.70.190:8083',
+                        accessKey: 'ubersys',
+                        secretKey: 'Ubersys123!@#',
+                        compliancePolicy: 'MyCompliancePolicy',
+                        audit: true,
+                        imageName: 'myapp:latest'
+                    )
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 sh 'echo Deploying...'
