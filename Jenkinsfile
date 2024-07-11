@@ -1,28 +1,61 @@
+pipeline {
+    agent any
+
     stages {
         stage('Clone') {
             steps {
-                git 'https://github.com/SeungJuLee91/Test'
                 git branch: 'main', url: 'https://github.com/SeungJuLee91/Test.git'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'echo Building...'
+                // Dockerfile 생성 및 이미지 빌드
+                sh 'echo "FROM imiell/bad-dockerfile:latest" > Dockerfile'
+                sh 'docker build --no-cache -t test/test-image:0.1 .'
             }
         }
+
         stage('Test') {
             steps {
                 sh 'echo Testing...'
             }
         }
+
+        stage('Prisma Cloud Scan') {
+            steps {
+                script {
+                    prismaCloudScanImage (
+                        ca: '',
+                        cert: '',
+                        dockerAddress: 'unix:///var/run/docker.sock',
+                        image: 'test/test-image:0.1',
+                        key: '',
+                        logLevel: 'info',
+                        podmanPath: '',
+                        // The project field below is only applicable if you are using Prisma Cloud Compute Edition and have set up projects (multiple consoles) on Prisma Cloud.
+                        project: '',
+                        resultsFile: 'prisma-cloud-scan-results.json',
+                        ignoreImageBuildTime: true
+                    )
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 sh 'echo Deploying...'
             }
         }
     }
+
     post {
+        always {
+            // The post section lets you run the publish step regardless of the scan results
+            prismaCloudPublish (
+                resultsFilePattern: 'prisma-cloud-scan-results.json'
+            )
+        }
         success {
             echo 'Build was successful!'
         }
