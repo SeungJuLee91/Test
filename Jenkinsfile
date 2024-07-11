@@ -27,7 +27,7 @@ pipeline {
                         consoleURI: 'http://192.168.70.190:8083',
                         accessKey: 'ubersys',
                         secretKey: 'Ubersys123!@#',
-                        compliancePolicy: 'Default - ignore Twistlock components',
+                        compliancePolicy: 'Default - alert on critical and high',
                         audit: true,
                         imageName: 'docker.io/username/myapp:latest'
                     )
