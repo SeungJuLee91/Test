@@ -22,39 +22,52 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Images') {
             steps {
-                // Dockerfile 생성 및 이미지 빌드
+                // Dockerfile을 빌드하여 이미지를 생성
                 sh '''
                     #!/bin/bash
                     set -e
-                    echo "FROM imiell/bad-dockerfile:latest" > Dockerfile
-                    docker build --no-cache -t test/test-image:0.1 .
+                    docker build --target build-stage -t test/build-image:latest .
+                    docker build --target final-stage -t test/final-image:latest .
                 '''
             }
         }
 
-        stage('Test') {
+        stage('Scan Build Image') {
             steps {
-                sh 'echo Testing...'
-            }
-        }
-
-        stage('Scan') {
-            steps {
-                // Scan the image
+                // 첫 번째 이미지를 스캔
                 script {
                     prismaCloudScanImage (
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'test/test-image:0.1',
+                        image: 'test/build-image:latest',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
-                        // The project field below is only applicable if you are using Prisma Cloud Compute Edition and have set up projects (multiple consoles) on Prisma Cloud.
                         project: '',
-                        resultsFile: 'prisma-cloud-scan-results.json',
+                        resultsFile: 'prisma-cloud-scan-build-image-results.json',
+                        ignoreImageBuildTime: true
+                    )
+                }
+            }
+        }
+
+        stage('Scan Final Image') {
+            steps {
+                // 두 번째 이미지를 스캔
+                script {
+                    prismaCloudScanImage (
+                        ca: '',
+                        cert: '',
+                        dockerAddress: 'unix:///var/run/docker.sock',
+                        image: 'test/final-image:latest',
+                        key: '',
+                        logLevel: 'info',
+                        podmanPath: '',
+                        project: '',
+                        resultsFile: 'prisma-cloud-scan-final-image-results.json',
                         ignoreImageBuildTime: true
                     )
                 }
@@ -70,9 +83,9 @@ pipeline {
 
     post {
         always {
-            // The post section lets you run the publish step regardless of the scan results
+            // 스캔 결과를 게시
             prismaCloudPublish (
-                resultsFilePattern: 'prisma-cloud-scan-results.json'
+                resultsFilePattern: 'prisma-cloud-scan-*-results.json'
             )
         }
         success {
