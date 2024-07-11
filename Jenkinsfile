@@ -8,6 +8,18 @@ pipeline {
             }
         }
 
+    stage('Install Docker') {
+        steps {
+            sh '''
+                #!/bin/bash
+                if ! [ -x "$(command -v docker)" ]; then
+                    curl -fsSL https://get.docker.com -o get-docker.sh
+                    sh get-docker.sh
+                fi
+            '''
+        }
+    }
+
         stage('Build') {
             steps {
                 // Dockerfile 생성 및 이미지 빌드
