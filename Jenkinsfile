@@ -8,41 +8,37 @@ pipeline {
             }
         }
 
-        stage('Install Docker') {
-            steps {
-                sh '''
-                    #!/bin/bash
-                    set -e
-                    if ! [ -x "$(command -v docker)" ]; then
-                        curl -fsSL https://get.docker.com -o get-docker.sh
-                        sudo sh get-docker.sh
-                    fi
-                    docker --version
-                '''
-            }
-        }
-
         stage('Build Images') {
             steps {
-                // Dockerfile을 빌드하여 이미지를 생성
                 sh '''
                     #!/bin/bash
                     set -e
-                    docker build --target build-stage -t test/build-image:latest .
-                    docker build --target final-stage -t test/final-image:latest .
+                    docker pull node:14
+                    docker pull nginx:alpine
+                    echo "FROM node:14 AS build-stage" > Dockerfile
+                    echo "WORKDIR /app" >> Dockerfile
+                    echo "COPY package*.json ./" >> Dockerfile
+                    echo "RUN npm install" >> Dockerfile
+                    echo "COPY . ." >> Dockerfile
+                    echo "RUN npm run build" >> Dockerfile
+                    echo "FROM nginx:alpine" >> Dockerfile
+                    echo "COPY --from=build-stage /app/build /usr/share/nginx/html" >> Dockerfile
+                    echo "EXPOSE 80" >> Dockerfile
+                    echo "CMD ['nginx', '-g', 'daemon off;']" >> Dockerfile
+                    docker build -t your-dockerhub-username/test-image:build .
+                    docker build -t your-dockerhub-username/test-image:final .
                 '''
             }
         }
 
         stage('Scan Build Image') {
             steps {
-                // 첫 번째 이미지를 스캔
                 script {
                     prismaCloudScanImage (
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'test/build-image:latest',
+                        image: 'your-dockerhub-username/test-image:build',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
@@ -56,13 +52,12 @@ pipeline {
 
         stage('Scan Final Image') {
             steps {
-                // 두 번째 이미지를 스캔
                 script {
                     prismaCloudScanImage (
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'test/final-image:latest',
+                        image: 'your-dockerhub-username/test-image:final',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
@@ -83,7 +78,6 @@ pipeline {
 
     post {
         always {
-            // 스캔 결과를 게시
             prismaCloudPublish (
                 resultsFilePattern: 'prisma-cloud-scan-*-results.json'
             )
