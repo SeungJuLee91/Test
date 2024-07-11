@@ -15,7 +15,7 @@ pipeline {
                     set -e
                     if ! [ -x "$(command -v docker)" ]; then
                         curl -fsSL https://get.docker.com -o get-docker.sh
-                        sh get-docker.sh
+                        sudo sh get-docker.sh
                     fi
                     docker --version
                 '''
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 // Scan the image
                 script {
-                    prismaCloudScanImage(
+                    prismaCloudScanImage (
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
@@ -71,7 +71,7 @@ pipeline {
     post {
         always {
             // The post section lets you run the publish step regardless of the scan results
-            prismaCloudPublish(
+            prismaCloudPublish (
                 resultsFilePattern: 'prisma-cloud-scan-results.json'
             )
         }
