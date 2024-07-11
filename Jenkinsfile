@@ -1,7 +1,32 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_VERSION = '20.10.7'
+    }
+
     stages {
+        stage('Install Docker') {
+            steps {
+                sh '''
+                    #!/bin/bash
+                    set -e
+                    if ! [ -x "$(command -v docker)" ]; then
+                      echo "Docker is not installed. Installing Docker..."
+                      apt-get update
+                      apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+                      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+                      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                      apt-get update
+                      apt-get install -y docker-ce=${DOCKER_VERSION}~3-0~ubuntu-focal
+                      usermod -aG docker jenkins
+                    else
+                      echo "Docker is already installed."
+                    fi
+                '''
+            }
+        }
+
         stage('Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/SeungJuLee91/Test.git'
