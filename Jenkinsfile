@@ -22,25 +22,23 @@ pipeline {
             }
         }
 
-        stage('Prisma Cloud Scan') {
+        stage('Scan') {
             steps {
-                script {
-                    prismaCloudScanImage (
-                        ca: '',
-                        cert: '',
-                        dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'test/test-image:0.1',
-                        key: '',
-                        logLevel: 'info',
-                        podmanPath: '',
-                        // The project field below is only applicable if you are using Prisma Cloud Compute Edition and have set up projects (multiple consoles) on Prisma Cloud.
-                        project: '',
-                        resultsFile: 'prisma-cloud-scan-results.json',
-                        ignoreImageBuildTime: true
-                    )
-                }
+                // Scan the image
+                prismaCloudScanImage ca: '',
+                cert: '',
+                dockerAddress: 'unix:///var/run/docker.sock',
+                image: 'test/test-image*',
+                key: '',
+                logLevel: 'info',
+                podmanPath: '',
+                // The project field below is only applicable if you are using Prisma Cloud Compute Edition and have set up projects (multiple consoles) on Prisma Cloud.
+                project: '',
+                resultsFile: 'prisma-cloud-scan-results.json',
+                ignoreImageBuildTime:true
             }
         }
+
 
         stage('Deploy') {
             steps {
