@@ -47,10 +47,10 @@ spec:
         stage('Build Images') {
             steps {
                 sh '''
-                    docker -H tcp://localhost:2375 pull node:14
-                    docker -H tcp://localhost:2375 pull nginx:alpine
-                    docker -H tcp://localhost:2375 build --target build-stage -t ubersys/test-image:build .
-                    docker -H tcp://localhost:2375 build --target final-stage -t ubersys/test-image:final .
+                    docker -H tcp://10.42.0.42:2375 pull node:14
+                    docker -H tcp://10.42.0.42:2375 pull nginx:alpine
+                    docker -H tcp://10.42.0.42:2375 build --target build-stage -t ubersys/test-image:build .
+                    docker -H tcp://10.42.0.42:2375 build --target final-stage -t ubersys/test-image:final .
                 '''
             }
         }
