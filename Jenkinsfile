@@ -11,11 +11,12 @@ pipeline {
                 sh '''
                     #!/bin/bash
                     set -e
-                    docker pull node:14
-                    docker pull nginx:alpine
+                    docker pull hello-world:latest
+
                 '''
             }
         }
+        
         stage('Scan Build Image') {
             steps {
                 script {
@@ -23,7 +24,7 @@ pipeline {
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'node:14',
+                        image: 'hello-world:latest',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
@@ -34,24 +35,7 @@ pipeline {
                 }
             }
         }
-        stage('Scan Final Image') {
-            steps {
-                script {
-                    prismaCloudScanImage (
-                        ca: '',
-                        cert: '',
-                        dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'nginx:alpine',
-                        key: '',
-                        logLevel: 'info',
-                        podmanPath: '',
-                        project: '',
-                        resultsFile: 'prisma-cloud-scan-final-image-results.json',
-                        ignoreImageBuildTime: true
-                    )
-                }
-            }
-        }
+        
         stage('Deploy') {
             steps {
                 sh 'echo Deploying...'
