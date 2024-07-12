@@ -16,6 +16,9 @@ spec:
     volumeMounts:
     - name: docker-graph-storage
       mountPath: /var/lib/docker
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
   volumes:
   - name: docker-graph-storage
     emptyDir: {}
@@ -47,10 +50,10 @@ spec:
         stage('Build Images') {
             steps {
                 sh '''
-                    docker -H tcp://10.42.0.42:2375 pull node:14
-                    docker -H tcp://10.42.0.42:2375 pull nginx:alpine
-                    docker -H tcp://10.42.0.42:2375 build --target build-stage -t ubersys/test-image:build .
-                    docker -H tcp://10.42.0.42:2375 build --target final-stage -t ubersys/test-image:final .
+                    docker -H tcp://localhost:2375 pull node:14
+                    docker -H tcp://localhost:2375 pull nginx:alpine
+                    docker -H tcp://localhost:2375 build --target build-stage -t ubersys/test-image:build .
+                    docker -H tcp://localhost:2375 build --target final-stage -t ubersys/test-image:final .
                 '''
             }
         }
