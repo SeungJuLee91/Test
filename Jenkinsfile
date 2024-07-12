@@ -11,7 +11,7 @@ pipeline {
                 sh '''
                     #!/bin/bash
                     set -e
-                    docker pull hello-world:latest
+                    docker pull node:14
 
                 '''
             }
@@ -24,7 +24,7 @@ pipeline {
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'hello-world:latest',
+                        image: 'node:14',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
