@@ -13,30 +13,6 @@ pipeline {
                     set -e
                     docker pull node:14
                     docker pull nginx:alpine
-                    echo "FROM node:14 AS build-stage" > Dockerfile
-                    echo "WORKDIR /app" >> Dockerfile
-                    echo "COPY package*.json ./" >> Dockerfile
-                    echo "RUN npm install" >> Dockerfile
-                    echo "COPY . ." >> Dockerfile
-                    echo "RUN npm run build" >> Dockerfile
-                    echo "FROM nginx:alpine" >> Dockerfile
-                    echo "COPY --from=build-stage /app/build /usr/share/nginx/html" >> Dockerfile
-                    echo "EXPOSE 80" >> Dockerfile
-                    echo "CMD ['nginx', '-g', 'daemon off;']" >> Dockerfile
-                    cat <<EOF > Dockerfile
-                    FROM node:14 AS build-stage
-                    WORKDIR /app
-                    COPY package*.json ./
-                    RUN npm install
-                    COPY . .
-                    RUN npm run build
-                    FROM nginx:alpine
-                    COPY --from=build-stage /app/build /usr/share/nginx/html
-                    EXPOSE 80
-                    CMD ["nginx", "-g", "daemon off;"]
-                    EOF
-                    docker build -t your-dockerhub-username/test-image:build .
-                    docker build -t your-dockerhub-username/test-image:final .
                 '''
             }
         }
@@ -47,7 +23,7 @@ pipeline {
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'your-dockerhub-username/test-image:build',
+                        image: 'node:14',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
@@ -65,7 +41,7 @@ pipeline {
                         ca: '',
                         cert: '',
                         dockerAddress: 'unix:///var/run/docker.sock',
-                        image: 'your-dockerhub-username/test-image:final',
+                        image: 'nginx:alpine',
                         key: '',
                         logLevel: 'info',
                         podmanPath: '',
