@@ -13,6 +13,8 @@ pipeline {
                 command:
                 - cat
                 tty: true
+                securityContext:
+                  privileged: true
                 volumeMounts:
                 - name: docker-sock
                   mountPath: /var/run/docker.sock
@@ -25,6 +27,7 @@ pipeline {
               - name: docker-sock
                 hostPath:
                   path: /var/run/docker.sock
+                  type: Socket
             """
         }
     }
