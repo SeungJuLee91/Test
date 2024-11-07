@@ -1,5 +1,5 @@
 variables: 
-  IMAGE_NAME: $CI_PROJECT_PATH:$CI_COMMIT_SHA
+  IMAGE_NAME: vulnerables/web-dvwa
 
 image: docker:19.03
 services:
