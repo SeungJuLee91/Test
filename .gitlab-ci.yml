@@ -1,9 +1,9 @@
 variables: 
   IMAGE_NAME: vulnerables/web-dvwa
 
-image: docker:19.03
+image: docker:25.0.5
 services:
-  - docker:19.03-dind
+  - docker:25.0.5-dind
 
 # Jobs are ran independently from each other, so build and scan needs to be in a single job.
 build-and-scan:
