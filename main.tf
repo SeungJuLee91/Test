@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "my_instance" { # ”타입” “terraform구성파일에서 참조할 이름”
-  ami           = "ami-09d8ed8255877048d" # 원하는 AMI ID로 변경
+  ami           = "ami-09d8ed8255877048d" # 원하는 AMI ID로 변경 
   instance_type = "t1.micro"
 
   tags = {
