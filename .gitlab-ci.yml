@@ -1,5 +1,5 @@
 variables: 
-  IMAGE_NAME: vulnerables/web-dvwa
+  IMAGE_NAME: ubuntu:14.04
 
 image: docker:25.0.5
 services:
