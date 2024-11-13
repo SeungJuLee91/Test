@@ -3,7 +3,7 @@ variables:
 
 image: docker:25.0.5
 services:
-  - docker:25.0.5-dind
+  - docker:25.0.5-dind 
 
 # Jobs are ran independently from each other, so build and scan needs to be in a single job.
 build-and-scan:
