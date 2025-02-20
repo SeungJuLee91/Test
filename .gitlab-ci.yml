@@ -5,6 +5,7 @@ image: docker:25.0.5
 services:
   - docker:25.0.5-dind 
 
+# 진행과정(목차)
 stages:
   - build
   - test
