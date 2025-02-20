@@ -41,3 +41,6 @@ deploy:
     - echo "Starting Deployment..."
     - echo "Hello, World! (Deploy Stage)"
     - echo "Deployment Completed"
+    #ex1) Docker run
+    #ex2) kubectl create
+    #ex3) terraform apply
