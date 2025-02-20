@@ -33,9 +33,9 @@ test:
     - echo "Running Tests..."
     - echo "Hello, World! (Test Stage)"
     - echo "Tests Completed"
-    #ex1) docker run --rm
-    #ex2) kubectl apply --dry-run
-    #ex3) terraform plan
+    #ex1) docker run --rm 컨테이너 실행 후 자동 삭제
+    #ex2) kubectl apply --dry-run 배포없이 구성만 검증
+    #ex3) terraform plan 테라폼파일 검증
 
 # 배포 단계
 deploy:
@@ -45,5 +45,5 @@ deploy:
     - echo "Hello, World! (Deploy Stage)"
     - echo "Deployment Completed"
     #ex1) Docker run
-    #ex2) kubectl create
+    #ex2) kubectl create 
     #ex3) terraform apply
