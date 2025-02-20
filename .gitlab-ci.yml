@@ -1,7 +1,11 @@
+# 변수 선언
 variables: 
   IMAGE_NAME: ubuntu:14.04
-
+  
+#실행 환경 이미지 설정
 image: docker:25.0.5
+
+#Docker-in-Docker 서비스 실행
 services:
   - docker:25.0.5-dind 
 
