@@ -5,11 +5,34 @@ image: docker:25.0.5
 services:
   - docker:25.0.5-dind 
 
-# Jobs are ran independently from each other, so build and scan needs to be in a single job.
+stages:
+  - build
+  - test
+  - deploy
+
+# CI 과정 (빌드 & 보안 검사)
 build-and-scan:
+  stage: build
   script:
-    - |
-      wget --header "Authorization: Basic $(echo -n $PCC_USER:$PCC_PASS | base64 | tr -d '\n')" "$PCC_CONSOLE_URL/api/v1/util/twistcli"
-      chmod a+x ./twistcli
-      docker build -t $IMAGE_NAME .
-      ./twistcli images scan --docker-address http://docker:2375 --address $PCC_CONSOLE_URL --user $PCC_USER --password $PCC_PASS --details $IMAGE_NAME
+    - echo "Starting Build and Scan..."
+    - wget --header "Authorization: Basic $(echo -n $PCC_USER:$PCC_PASS | base64 | tr -d '\n')" "$PCC_CONSOLE_URL/api/v1/util/twistcli"
+    - chmod a+x ./twistcli
+    - docker build -t $IMAGE_NAME .
+    - ./twistcli images scan --docker-address http://docker:2375 --address $PCC_CONSOLE_URL --user $PCC_USER --password $PCC_PASS --details $IMAGE_NAME
+    - echo "Build and Scan Completed"
+
+# 테스트 단계
+test:
+  stage: test
+  script:
+    - echo "Running Tests..."
+    - echo "Hello, World! (Test Stage)"
+    - echo "Tests Completed"
+
+# 배포 단계
+deploy:
+  stage: deploy
+  script:
+    - echo "Starting Deployment..."
+    - echo "Hello, World! (Deploy Stage)"
+    - echo "Deployment Completed"
