@@ -33,6 +33,9 @@ test:
     - echo "Running Tests..."
     - echo "Hello, World! (Test Stage)"
     - echo "Tests Completed"
+    #ex1) docker run --rm
+    #ex2) kubectl apply --dry-run
+    #ex3) terraform plan
 
 # 배포 단계
 deploy:
