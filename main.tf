@@ -7,6 +7,6 @@ resource "aws_instance" "my_instance" { # ”타입” “terraform구성파일�
   instance_type = "t1.micro"
 
   tags = {
-    Name = "TerraformTest" # 실제 인스턴스 이름 
+    Name = "TerraformTest" # 실제 인스턴스 이름 이승주
   }
 }
