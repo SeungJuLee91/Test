@@ -1,67 +1,32 @@
 pipeline {
+    agent any
 
-    agent {
-        label 'jenkins-jenkins-agent' // 이미 설정된 에이전트 라벨을 사용합니다.
+    environment {
+        IMAGE_LIST = "nginx node python alpine"
     }
 
     stages {
-        stage('Clone') {
+        stage('Prisma Cloud Scan Images') {
             steps {
-                container('dind') {
-                    git branch: 'main', url: 'https://github.com/SeungJuLee91/Test.git'
-                }
-            }
-        }
-        stage('Build Images') {
-            steps {
-                container('dind') {
-                    sh '''
-                        #!/bin/bash
-                        set -e
-                        docker pull node:14
-                    '''
-                }
-            }
-        }
-        stage('Scan Build Image') {
-            steps {
-                container('dind') {
-                    script {
-                        prismaCloudScanImage (
-                            ca: '',
-                            cert: '',
-                            dockerAddress: 'unix:///var/run/docker.sock',
-                            image: 'node:14',
-                            key: '',
-                            logLevel: 'info',
-                            podmanPath: '',
-                            project: '',
-                            resultsFile: 'prisma-cloud-scan-build-image-results.json',
-                            ignoreImageBuildTime: true
+                script {
+                    IMAGE_LIST.split().each { image ->
+                        def tag = "custom-${image}:${env.BUILD_ID}"
+                        def buildContext = "${env.WORKSPACE}/${image}"
+
+                        sh "docker build -t ${tag} ${buildContext}"
+
+                        prismaCloudScanImage(
+                            image: tag
                         )
                     }
                 }
             }
         }
-        stage('Deploy') {
-            steps {
-                container('dind') {
-                    sh 'echo Deploying...'
-                }
-            }
-        }
     }
+
     post {
         always {
-            prismaCloudPublish (
-                resultsFilePattern: 'prisma-cloud-scan-*-results.json'
-            )
-        }
-        success {
-            echo 'Build was successful!'
-        }
-        failure {
-            echo 'Build failed.'
+            echo '파이프라인 종료. 정리 중...'
         }
     }
 }
