@@ -12,7 +12,6 @@ pipeline {
                 }
             }
         }
-    }
         stage('Build Images') {
             steps {
                 container('dind') {
