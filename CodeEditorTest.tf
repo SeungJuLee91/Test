@@ -58,5 +58,5 @@ resource "aws_lb" "app_lb" {
 resource "aws_ssm_parameter" "leaked_secret" {
   name  = "/example/secret"
   type  = "SecureString"
-  value = "/md6zwupJ3Bv49tHxsRezLFqKBBkHQ9fPLJGwymZ" # ❗ 의도적으로 하드코딩된 시크릿
+  value = "my-super-secret-password-regex" # ❗ 의도적으로 하드코딩된 시크릿
 }
